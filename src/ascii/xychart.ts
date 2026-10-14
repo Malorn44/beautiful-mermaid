@@ -134,7 +134,7 @@ function renderVertical(
   const yGutter = Math.max(...yLabels.map(l => l.length)) + 1
 
   const plotW = Math.max(PLOT_WIDTH, dataCount * 6)
-  const rowsPerTick = Math.max(1, Math.round(PLOT_HEIGHT / intervals))
+  const rowsPerTick = Math.max(1, Math.floor(PLOT_HEIGHT / intervals))
   const plotH = intervals * rowsPerTick
   const bandW = Math.floor(plotW / dataCount)
   const catLabels = getCategoryLabels(chart, dataCount)
