@@ -419,4 +419,22 @@ describe('xychart ASCII – lines with bars', () => {
     const axis = lines.findIndex(l => /^\s*0┼/.test(l))
     expect(lines[axis]).toMatch(/^\s*0┼─+╯/)
   })
+
+  for (const useAscii of [false, true]) {
+    it(`draws a line behind the bars, leaving every bar cell as it was${useAscii ? ' (ASCII)' : ''}`, () => {
+      const bars = `xychart-beta
+        x-axis [A, B, C, D]
+        y-axis 0 --> 100
+        bar [20, 50, 80, 40]`
+      const cells = (text: string) => {
+        const lines = render(text, useAscii).split('\n')
+        const top = lines.findIndex(l => /^\s*\d+[┤+]/.test(l))
+        const axis = lines.findIndex(l => /^\s*0[┼+]/.test(l))
+        return lines.slice(top, axis + 1).flatMap((l, r) => [...l].flatMap((c, col) => (isBar(c) ? [`${axis - top - r}:${col}`] : [])))
+      }
+      for (const line of ['line [20, 50, 80, 40]', 'line [0, 50, 100, 25]']) {
+        expect(cells(`${bars}\n        ${line}`)).toEqual(cells(bars))
+      }
+    })
+  }
 })

@@ -8,7 +8,8 @@
 // Bar charts: █ (Unicode) or # (ASCII) block characters. Unicode bars are
 // drawn to the half row with ▀ and ▄, so they meet the axis line and stop on
 // the tick they reach, both of which run through the middle of a cell.
-// Line charts: continuous staircase routing with rounded corners (╭╮╰╯│─).
+// Line charts: continuous staircase routing with rounded corners (╭╮╰╯│─),
+// drawn behind bars.
 //
 // Multi-series support: each series gets a distinct color from a palette.
 // ============================================================================
@@ -466,10 +467,12 @@ function drawStaircaseLine(
     row: valueToRow(v),
   }))
 
-  // Helper to draw on the canvas (row 0 = bottom, displayed inverted)
+  // Helper to draw on the canvas (row 0 = bottom, displayed inverted). The
+  // line passes behind bars: a cell that already holds a bar keeps it.
+  const isBar = (c: string) => c === ch.bar || c === ch.barUpper || c === ch.barLower
   const drawAt = (col: number, row: number, char: string) => {
     const displayRow = plotTop + (plotH - 1 - row)
-    if (displayRow >= 0 && col >= plotLeft && col < plotLeft + plotTotalW) {
+    if (displayRow >= 0 && col >= plotLeft && col < plotLeft + plotTotalW && !isBar(get(canvas, displayRow, col))) {
       set(canvas, roles, displayRow, col, char, 'arrow', hexCanvas, hexColor)
     }
   }
